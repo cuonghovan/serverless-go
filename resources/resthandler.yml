@@ -1,0 +1,41 @@
+resthandler:
+  name: ${self:provider.resourceprefix}resthandler
+  handler: resthandler
+  memorySize: 128
+  timeout: 30
+  package:
+    artifact: bin/resthandler.zip
+  role: resthandlerRole
+  events:
+    - http:
+        path: hello
+        method: get
+        cors: true
+
+FuncResources:
+  Resources:
+    resthandlerRole:
+      Type: AWS::IAM::Role
+      Properties:
+        Path: /aws-practice/
+        RoleName: ${self:provider.resourceprefix}resthandlerRole
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName:  ${self:provider.resourceprefix}resthandlerPolicy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action: 
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                    - logs:DeleteLogGroup
+                  Resource: "*"

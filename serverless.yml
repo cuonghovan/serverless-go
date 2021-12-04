@@ -1,0 +1,25 @@
+service: aws-practice
+
+frameworkVersion: "2"
+
+provider:
+  name: aws
+  runtime: go1.x
+  stage: ${env:RELEASE_STAGE, "development"}
+  region: ${env:AWS_REGION, "ap-southeast-1"}
+  tenant: ${env:TENANT, env:AWS_ACCOUNT_ID}
+  resourceprefix: "${self:service}-${self:provider.tenant}-${self:provider.stage}-"
+
+  stackTags:
+    Project: "aws-practice"
+
+package:
+  individually: true
+  include:
+    - "bin/**"
+
+functions:
+  resthandler: ${file(resources/resthandler.yml):resthandler}
+
+resources:
+  - ${file(resources/resthandler.yml):FuncResources}
